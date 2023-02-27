@@ -1,0 +1,97 @@
+---
+title: "San Diego Airbnb Analysis"
+output: html_document
+date: "2023-02-26"
+---
+
+# San Diego Airbnb Analysis
+
+## Importing Packages
+```{r setup}
+library(tidyverse)
+library(ggplot2)
+
+setwd("C:/Users/joshu/Desktop/RPractice/san diego analysis/")
+```
+
+## Importing dataset
+```{r}
+sd_dat = read.csv("san_diego_listings.csv", header = T)
+sd_filt = sd_dat[!is.na(sd_dat$reviews_per_month),]
+sd_filt = sd_filt[sd_filt$last_review >= "2022-01-01",]
+```
+
+## Histogram of Prices
+Because of multiple outliers, the histogram is too spread out and harder to read. However, you can see it is skewed right with majority of the listings are under $5,000.
+```{r}
+ggplot(data = sd_filt, aes(x = price)) + 
+  geom_histogram(binwidth = 40, color = "orange") + 
+  labs(x = "Price", y = "Number Of Listings") +
+  scale_x_continuous(labels=scales::dollar_format()) +
+  theme_bw()
+```
+
+
+
+## Boxplot for each Room Type
+Similarly to the histogram, the boxplot is too spread out due to outliers. For temporary measures, I filtered out the rooms with less than $2,000 per night to see the distribution of majority of the listings. There are still a lot of outliers. From the filtered listings, "Entire home/apt" seems to be the most expensive room type and "Shared Rooms" are the least expensive.
+```{r}
+ggplot(data = sd_filt[sd_filt$price < 2000,], aes(x = room_type, y = price)) +
+  geom_boxplot(color = "blue") +
+  labs(x = "Room Type", y = "Prices") + 
+  scale_y_continuous(labels=scales::dollar_format()) +
+  theme_bw() + 
+  theme(legend.position = "none")
+```
+
+
+## Histogram of prices for each Room Type
+Similar to the boxplot, the outliers make it hard to view the density plot. Even with filtering the data, the density plots are clustered. Majority of the dataset is "Entire home/apt" and there are very little "Hotel rooms." Similar to the boxplot, "Entire home/apt" seem to be the most expensive room type and "Shared Rooms" are the least expensive.
+```{r}
+ggplot(data = sd_filt[sd_filt$price < 2000,], aes(x = price, fill = factor(room_type))) +
+  geom_histogram(binwidth = 60) +
+  labs(x = "Prices", y = "Number Of Listings") + 
+  scale_x_continuous(labels=scales::dollar_format()) +
+  theme_bw() + 
+  guides(fill = guide_legend(title = "Room Type"))
+```
+
+
+## Showing Top 20 Neighbourhood Prices
+La Jolla and Torrey Pines seem to be the most expensive neighbourhoods in San Diego. Based on the color, Mission Bay clearly has way more listings than other neighbourhoods.
+```{r}
+# Sorteing Average Neighbourhood Prices
+neigh_price = sd_filt %>%
+  group_by(neighbourhood) %>% 
+  summarize(avg_price = mean(price))
+neigh_price = neigh_price[order(neigh_price$avg_price, decreasing = T),]
+
+neigh_count = sd_filt %>%
+  group_by(neighbourhood) %>%
+  count()
+
+top_neigh_prices = neigh_price[1:20,]
+top_neigh_prices = left_join(top_neigh_prices, neigh_count, by = "neighbourhood")
+
+# Barplot of Prices
+ggplot(data = top_neigh_prices, aes(x = fct_reorder(neighbourhood, avg_price), y = avg_price)) +
+  geom_bar(stat = "identity", aes(fill = n)) + 
+  labs(x = "Neighbourhood", y = "Average Prices") +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  coord_flip() + 
+  theme_bw() +
+  guides(fill = guide_colourbar(title="Number Of Listings")) +
+  scale_fill_gradient(low = "blue", high = "red", na.value = NA)
+
+```
+
+
+## Scatterplot of Price To Number Of Reviews
+The price to number of reviews scatterplot suggests there is no correlation between the price and number of reviews for the airbnb listings in San Diego.
+```{r}
+ggplot(data = sd_filt[sd_filt$price < 2000,], aes(x = number_of_reviews, y = price)) +
+  geom_point() + 
+  scale_y_continuous(labels=scales::dollar_format()) + 
+  theme_bw()
+```
+
