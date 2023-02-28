@@ -34,8 +34,7 @@ for(i in 1:groups){
 
 
 ui <- dashboardPage(
-  skin = "blue",
-  dashboardHeader(title = "SD Airbnb"),
+  dashboardHeader(title = "SD Airbnb's in 2022"), skin = "blue",
   dashboardSidebar(
     width = 300,
     sidebarMenu(
@@ -61,23 +60,27 @@ ui <- dashboardPage(
       valueBoxOutput("reviews_mean"),
       valueBoxOutput("listing_mean")
     ),
-    box(title = "Price Distribution By Listing", 
+    fluidRow(
+      box(title="Price Distribution By Listing",
         status = "primary",
         solidHeader = T,
         plotOutput(outputId = "pricesHist")),
-    box(title = "Boxplots By Room Type", 
-        status = "primary",
-        solidHeader = T,
-        plotOutput(outputId = "boxPlot")),
-    box(title = "Average Prices By Neighbourhood", 
-        status = "primary",
-        solidHeader = T,
-        plotOutput(outputId = "neighPrice")),
-    box(title = "Number Of Listings By Neighbourhood", 
-        status = "primary",
-        solidHeader = T,
-        plotOutput(outputId = "neighListing"))
-  )
+      box(title = "Boxplots By Room Type", 
+          status = "primary",
+          solidHeader = T,
+          plotOutput(outputId = "boxPlot"))
+    ),
+    fluidRow(
+      box(title = "Average Prices By Neighbourhood", 
+          status = "primary",
+          solidHeader = T,
+          plotOutput(outputId = "neighPrice")),
+      box(title = "Number Of Hosts By Neighbourhood", 
+          status = "primary",
+          solidHeader = T,
+          plotOutput(outputId = "neighHosts"))
+    )
+  ),
 )
 
 server <- function(input, output) {
@@ -92,7 +95,7 @@ server <- function(input, output) {
   
   output$pricesHist <- renderPlot({
     ggplot(data = dataDf(), aes(x = price)) +
-      geom_histogram(binwidth = 40, fill = "orange") +
+      geom_histogram(binwidth = nrow(dataDf())**(1/2), color = "white", fill = "#55ab55") +
       labs(x = "", y = "") +
       scale_x_continuous(labels=scales::dollar_format()) +
       theme_bw() +
@@ -102,7 +105,7 @@ server <- function(input, output) {
   
   output$boxPlot <- renderPlot({
     ggplot(data = dataDf(), aes(x = room_type, y = price)) +
-      geom_boxplot(color = "black", fill = "orange") +
+      geom_boxplot(fill = "orange") +
       labs(x = "", y = "") + 
       scale_y_continuous(labels=scales::dollar_format()) +
       theme_bw() + 
@@ -134,17 +137,17 @@ server <- function(input, output) {
     
   })
   
-  output$neighListing <- renderPlot({
-    cur_neigh_count = dataDf() %>%
+  output$neighHosts <- renderPlot({
+    cur_host_count = dataDf() %>%
       group_by(neighbourhood) %>%
-      count()
-    cur_neigh_count = cur_neigh_count[order(cur_neigh_count$n, decreasing = T),]
-    ggplot(data = cur_neigh_count, aes(x = fct_reorder(neighbourhood, n), y = n)) +
+      summarize(num_host = n_distinct(host_id))
+    cur_host_count = cur_host_count[order(cur_host_count$num_host, decreasing = T),]
+    ggplot(data = cur_host_count, aes(x = fct_reorder(neighbourhood, num_host), y = num_host)) +
       geom_point(size = 3) +
       geom_segment(aes(x = neighbourhood,
                        xend = neighbourhood,
                        y = 0,
-                       yend = n)) +
+                       yend = num_host)) +
       labs(x = "", y = "") +
       coord_flip() + 
       theme_bw() +
@@ -176,7 +179,7 @@ server <- function(input, output) {
     
     valueBox(
       value = round(mean(host_count$n),2),
-      subtitle = "Average Number Of Listings",
+      subtitle = "Average Number Of Listings Per Host",
       color = "yellow",
       icon = icon("bar-chart")
     )

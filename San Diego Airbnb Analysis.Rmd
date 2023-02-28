@@ -11,7 +11,7 @@ date: "2023-02-26"
 library(tidyverse)
 library(ggplot2)
 
-setwd("C:/Users/joshu/Desktop/RPractice/san diego analysis/")
+setwd("C:/Users/joshu/Desktop/RPractice/san diego analysis/old/")
 ```
 
 ## Importing dataset
@@ -94,4 +94,26 @@ ggplot(data = sd_filt[sd_filt$price < 2000,], aes(x = number_of_reviews, y = pri
   scale_y_continuous(labels=scales::dollar_format()) + 
   theme_bw()
 ```
+
+
+## Lolipop Plot of Top 20 Neighbourhoods with the most Hosts
+Just like how Mission bay has the most listings, it is not surprising it has the most unique hosts.
+```{r}
+host_count = sd_filt %>%
+      group_by(neighbourhood) %>%
+      summarize(num_host = n_distinct(host_id))
+host_count = host_count[order(host_count$num_host, decreasing = T),]
+
+ggplot(data = host_count[1:20,], aes(x = fct_reorder(neighbourhood, num_host), y = num_host)) +
+  geom_point(size = 3) +
+  geom_segment(aes(x = neighbourhood,
+                   xend = neighbourhood,
+                   y = 0,
+                   yend = num_host)) +
+  labs(x = "", y = "") +
+  coord_flip() + 
+  theme_bw() +
+  theme(text = element_text(size = 15))
+```
+
 
