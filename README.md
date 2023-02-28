@@ -8,7 +8,7 @@
 
 ### Shiny App Link: https://jjkcoding.shinyapps.io/SD_Airbnb_2022/
 
-![image](https://user-images.githubusercontent.com/43764400/221730676-342abb79-d6ce-41ab-b1a4-df02db95bd93.png)
+![image](https://user-images.githubusercontent.com/43764400/221736048-b4cf3e9b-2d43-45b2-9e6b-d29acc3cf563.png)
 
 ## Purpose
 The purpose of this project was to analyze Airbnb prices in San Diego to identify the best neighborhoods to purchase an Airbnb property. As an aspiring Airbnb host, I wanted to gain a better understanding of the San Diego housing market and identify potential investment opportunities. Additionally, I sought to improve my data manipulation skills by cleaning and filtering the data with Tidyverse, creating visualizations using ggplot2, and developing a Shiny dashboard to showcase my findings. Through this project, I not only gained valuable insights into the San Diego housing market but also enhanced my skills in data analysis and visualization, preparing me for future data-driven projects.
