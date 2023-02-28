@@ -6,7 +6,8 @@
 * Developed an interactive Shiny dashboard that utilized the data analysis findings to group neighborhoods by tiers based on their average price, host information, and number of listings, highlighting trends and insights.
 * **Main Packages:** ggplot2, tidyverse, shiny, shinydashboard
 
-Shiny App Link: https://jjkcoding.shinyapps.io/SD_Airbnb_2022/
+### Shiny App Link: https://jjkcoding.shinyapps.io/SD_Airbnb_2022/
+
 ![image](https://user-images.githubusercontent.com/43764400/221730676-342abb79-d6ce-41ab-b1a4-df02db95bd93.png)
 
 ## Purpose
