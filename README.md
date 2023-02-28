@@ -1,6 +1,6 @@
 # San-Diego-Airbnbs-Analysis
 
-# San Diego Airbnb Shiny Dashboard
+# San Diego Airbnb Shiny Analysis & Dashboard
 * Employed data manipulation techniques to clean and filter the San Diego Airbnb neighborhood data, ensuring the data was suitable for graph creation and analysis using RStudio and tidyverse.
 * Utilized RStudio and ggplot2/tidyverse packages to perform data analysis on San Diego Airbnb neighborhood prices, creating a range of visualizations, including bar charts, box plots, histograms, and lollipop graphs.
 * Developed an interactive Shiny dashboard that utilized the data analysis findings to group neighborhoods by tiers based on their average price, host information, and number of listings, highlighting trends and insights.
